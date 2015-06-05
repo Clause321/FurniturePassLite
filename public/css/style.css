@@ -1,0 +1,87 @@
+.navi{
+    background-color: #1a8bff;
+}
+
+.navi .navbar-nav>li>a{
+    color: #c9c9c9;
+}
+
+.navbar>.container .navbar-brand{
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/*
+AUTH PAGE
+*/
+
+.authForm-hidden{
+    display: none;
+}
+
+.authForm-create-button{
+    display: inline;
+    width: 45%;
+}
+
+.authForm-login-button{
+    display: inline;
+    float: right;
+    width: 45%;
+    margin-left: -45%;
+}
+
+/*
+INDEX PAGE
+*/
+
+.index-owner-name{
+    margin-bottom: 10px;
+}
+
+/*
+USER_ITEMS PAGE
+*/
+
+.userItems{
+    font-size: 18px;
+}
+
+.userItems-status-button{
+    width: 100%;
+    margin-right: 24px;
+}
+
+.userItems-edit-button{
+    float: right;
+}
+
+.userItems-sold-button{
+    float: right;
+    margin-left: 8px;
+}
+
+.userItems-row{
+    padding-bottom: 6px;
+    padding-top: 6px;
+    border-bottom: 1px solid grey;
+}
+
+.userItems-add{
+    padding-top: 6px;
+}
+
+.userItems-add button{
+    float: right;
+    margin-left: 8px;
+}
+
+/*
+EDIT_ITEMS PAGE
+*/
+
+.editItem-form button{
+    float: right;
+    margin-left: 8px;
+}

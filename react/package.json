@@ -1,0 +1,21 @@
+{
+  "name": "react",
+  "version": "0.1.0",
+  "description": "source reactjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "browserify -t reactify -t babelify -t es6-destructuring -d -e app.js -o ../public/build/bundle.js"
+  },
+  "author": "Yingfei Wang",
+  "license": "ISC",
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.0",
+    "es6-destructuring": "^0.4.0",
+    "jquery": "^2.1.4",
+    "react": "^0.13.3",
+    "react-bootstrap": "^0.22.3",
+    "react-router": "^0.13.3",
+    "reactify": "^1.1.1"
+  }
+}
