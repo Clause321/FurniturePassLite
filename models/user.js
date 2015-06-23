@@ -1,4 +1,7 @@
 var mongoose = require('mongoose');
+var crate = require('mongoose-crate');
+var LocalFS = require('mongoose-crate-localfs');
+
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
 
@@ -29,6 +32,15 @@ var itemSchema = Schema({
     owner: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    }
+});
+
+itemSchema.plugin(crate, {
+    storage: new LocalFS({
+        directory: '../media/images'
+    }),
+    fields: {
+        image: {}
     }
 });
 

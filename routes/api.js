@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-User = require('../models/user').User;
-Item = require('../models/user').Item;
+var User = require('../models/user').User;
+var Item = require('../models/user').Item
 
 function handleError(err, res){
     console.log(err.toString());
@@ -77,7 +77,7 @@ router
         res.json(item);
     });
 })
-.put('/item/:item_id', isItemOwner, function(req, res){
+.put('/item/:item_id', isItemOwner, function(req, res){ // do it with PATCH ??
     Item.findOne({_id: req.params.item_id}, function(err, item){
         if(err) return handleError(err, res);
         item.title = req.body.title || item.title;
