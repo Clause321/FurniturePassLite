@@ -1,14 +1,18 @@
 var React = require('react');
 var {Row, Col, Grid} = require('react-bootstrap');
 var $ = require('jquery');
+var getMedia = require('./utils/getMedia');
 
 var ItemView = React.createClass({
     render: function(){
         var item = this.props.item;
+        var image;
+        if(!item.image) image = '/images/no_image_available.svg';
+        else image = getMedia(item.image.small.url);
         return(
             <Row className='itemView'>
                 <Col sm={3} xs={4}>
-                    <img src='/images/no_image_available.svg' />
+                    <img src={image} />
                 </Col>
                 <Col sm={6} xs={8}>
                     <h4>{item.title}</h4>

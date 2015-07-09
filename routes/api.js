@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var fs = require('fs');
 
 var User = require('../models/user').User;
-var Item = require('../models/user').Item
+var Item = require('../models/user').Item;
 
 function handleError(err, res){
     console.log(err.toString());
@@ -51,16 +52,35 @@ router
             status: req.body.status,
             owner: user._id
         });
-        newItem.save(function(err){
+        var image = 'public/images/no_image_available.svg';
+        console.log(req.body.image);
+        if(req.body.image){
+            console.log('yes?');
+            var regex = /^data:.+\/(.+);base64,(.*)$/;
+            var matches = req.body.image.match(regex);
+            var ext = matches[1];
+            var data = matches[2];
+            var buffer = new Buffer(data, 'base64');
+            image = 'tmp/data.' + ext;
+            fs.writeFileSync(image, buffer);
+        }
+        newItem.attach('image', {path: image}, function(err){
             if(err) return handleError(err, res);
-            user.items.push(newItem._id);
-            user.save();
-            res.json(newItem);
+            newItem.save(function(err){
+                if(err) return handleError(err, res);
+                user.items.push(newItem._id);
+                user.save();
+                res.json(newItem);
+            });
         });
+
     });
 })
 .get('/items', function(req, res){
-    Item.find({status: 'on_sale'}, '_id title description detail owner').populate('owner', '_id name contacts').exec(function(err, items){
+    Item
+    .find({status: 'on_sale'}, '_id title description detail owner image')
+    .populate('owner', '_id name contacts')
+    .exec(function(err, items){
         if(err) return handleError(err, res);
         res.json(items);
     });
@@ -72,7 +92,10 @@ router
     });
 })
 .get('/item/:item_id', function(req, res){
-    Item.findOne({_id: req.params.item_id}, '_id title description detail').populate('owner', '_id name contacts').exec(function(err, item){
+    Item
+    .findOne({_id: req.params.item_id}, '_id title description detail image')
+    .populate('owner', '_id name contacts')
+    .exec(function(err, item){
         if(err) return handleError(err, res);
         res.json(item);
     });

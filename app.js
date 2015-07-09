@@ -15,7 +15,11 @@ mongoose.connect(dbConfig.url);
 // passport setup
 var passport       = require('passport');
 var expressSession = require('express-session');
-app.use(expressSession({secret: 'mySecretKey'}));
+app.use(expressSession({
+  secret: 'mySecretKey',
+  resave: true,
+  saveUninitialized: false
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
@@ -29,8 +33,8 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/media', express.static(path.join(__dirname, 'media')));

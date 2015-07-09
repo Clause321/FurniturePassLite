@@ -65,7 +65,8 @@ var AddForm = React.createClass({
             titleValue: '',
             descriptionValue: '',
             detailValue: '',
-            statusValue: 'off_shelf'
+            statusValue: 'off_shelf',
+            imageValue: null
         }
     },
     handleAdd: function(){
@@ -79,15 +80,30 @@ var AddForm = React.createClass({
             titleValue: '',
             descriptionValue: '',
             detailValue: '',
-            statusValue: 'off_shelf'
+            statusValue: 'off_shelf',
+            imageValue: null
         });
     },
+    handleFile: function(e){
+        var reader = new FileReader();
+        var file = e.target.files[0];
+
+        reader.onload = function(upload) {
+            this.setState({
+                imageValue: upload.target.result
+            });
+        }.bind(this);
+
+        reader.readAsDataURL(file);
+    },
     handleSubmit: function(){
+        console.log(this.state.imageValue);
         var item = {
             title: this.state.titleValue,
             description: this.state.descriptionValue,
             detail: this.state.detailValue,
-            status: this.state.statusValue
+            status: this.state.statusValue,
+            image: this.state.imageValue
         };
         this.props.handleAddItem(item, function(){
             this.handleCancel();
@@ -114,6 +130,11 @@ var AddForm = React.createClass({
                         placeholder='Details of this item'
                         ref='detail' />
                         */}
+                    <Input
+                        type='file'
+                        help='[Optional]'
+                        ref='image'
+                        onChange={this.handleFile} />
                     <Input
                         type='select'
                         valueLink={this.linkState('statusValue')}

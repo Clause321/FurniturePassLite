@@ -1,6 +1,8 @@
+var path = require('path');
 var mongoose = require('mongoose');
 var crate = require('mongoose-crate');
 var LocalFS = require('mongoose-crate-localfs');
+var GraphMagic = require('mongoose-crate-gm');
 
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
@@ -37,10 +39,23 @@ var itemSchema = Schema({
 
 itemSchema.plugin(crate, {
     storage: new LocalFS({
-        directory: '../media/images'
+        directory: path.join(__dirname, '../media/images')
     }),
     fields: {
-        image: {}
+        image: {
+            processor: new GraphMagic({
+                tmpDir: '/tmp',
+                formats: ['JPEG', 'GIF', 'PNG', 'SVG'],
+                transforms: {
+                    small: {
+                        resize: '160x160'
+                    },
+                        large: {
+                        resize: '1000x1000'
+                    }
+                }
+            })
+        }
     }
 });
 
