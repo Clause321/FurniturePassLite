@@ -55,11 +55,25 @@ USER_ITEMS PAGE
 
 .userItems-edit-button{
     float: right;
+    margin-left: 7px;
+    width: 84px;
 }
 
 .userItems-sold-button{
     float: right;
-    margin-left: 8px;
+    margin-left: 7px;
+    width: 84px;
+}
+
+.userItems-change-button{
+    float: right;
+    margin-left: 7px;
+    width: 84px;
+}
+
+.userItems-delete-button{
+    float: right;
+    width: 84px;
 }
 
 .userItems-row{
@@ -72,9 +86,20 @@ USER_ITEMS PAGE
     padding-top: 6px;
 }
 
-.userItems-add button{
+.userItems-add-image{
+    width: 240px;
+    max-height: 240px;
+    cursor: pointer;
+}
+
+#userItems-square-image{
+    display: none;
+}
+
+.userItems-add .right-button{
     float: right;
-    margin-left: 8px;
+    margin-left: 7px;
+    width: 84px;
 }
 
 /*
@@ -84,4 +109,14 @@ EDIT_ITEMS PAGE
 .editItem-form button{
     float: right;
     margin-left: 8px;
+}
+
+.editItems-add-image{
+    width: 240px;
+    max-height: 240px;
+    cursor: pointer;
+}
+
+#editItems-square-image{
+    display: none;
 }

@@ -19,12 +19,28 @@ function isLoggedIn(req, res, next){
 function isItemOwner(req, res, next){
     // request should have :item_id on the path
     Item.findOne({_id: req.params.item_id}).populate('owner').exec(function(err, item){
-        if(err) return handleError(err, res);
+        if(err){
+            return handleError(err, res);
+        }
+        if(item === null){
+            res.sendStatus(404);
+        }
         if(item.owner._id.toString() != req.user._id){
             res.sendStatus(403);
         }
         else next();
     });
+}
+
+function prepareImage(img){
+    var regex = /^data:.+\/(.+);base64,(.*)$/;
+    var matches = img.match(regex);
+    var ext = matches[1];
+    var data = matches[2];
+    var buffer = new Buffer(data, 'base64');
+    var image = 'tmp/data.' + ext;
+    fs.writeFileSync(image, buffer);
+    return image;
 }
 
 router.use(isLoggedIn);
@@ -38,7 +54,9 @@ router
     .findOne({'email': req.user.email})
     .populate('items')
     .exec(function(err, user){
-        if(err) return handleError(err, res);
+        if(err){
+            return handleError(err, res);
+        }
         res.json(user.items);
     });
 })
@@ -52,28 +70,30 @@ router
             status: req.body.status,
             owner: user._id
         });
-        var image = 'public/images/no_image_available.svg';
-        console.log(req.body.image);
         if(req.body.image){
-            console.log('yes?');
-            var regex = /^data:.+\/(.+);base64,(.*)$/;
-            var matches = req.body.image.match(regex);
-            var ext = matches[1];
-            var data = matches[2];
-            var buffer = new Buffer(data, 'base64');
-            image = 'tmp/data.' + ext;
-            fs.writeFileSync(image, buffer);
+            var image = prepareImage(req.body.image);
+            newItem.attach('image', {path: image}, function(err){
+                if(err){
+                    return handleError(err, res);
+                }
+                newItem.save(function(err){
+                    if(err){
+                        return handleError(err, res);
+                    }
+                    user.items.push(newItem._id);
+                    user.save();
+                    res.json(newItem);
+                });
+            })
         }
-        newItem.attach('image', {path: image}, function(err){
-            if(err) return handleError(err, res);
-            newItem.save(function(err){
-                if(err) return handleError(err, res);
-                user.items.push(newItem._id);
-                user.save();
-                res.json(newItem);
-            });
+        newItem.save(function(err){
+            if(err){
+                return handleError(err, res);
+            }
+            user.items.push(newItem._id);
+            user.save();
+            res.json(newItem);
         });
-
     });
 })
 .get('/items', function(req, res){
@@ -102,7 +122,12 @@ router
 })
 .put('/item/:item_id', isItemOwner, function(req, res){ // do it with PATCH ??
     Item.findOne({_id: req.params.item_id}, function(err, item){
-        if(err) return handleError(err, res);
+        if(err){
+            return handleError(err, res);
+        }
+        if(item === null){
+            res.sendStatus(404);
+        }
         item.title = req.body.title || item.title;
         item.status = req.body.status || item.status;
         item.description = req.body.description || item.description;
@@ -110,13 +135,32 @@ router
         if( req.body.actualPrice === 0) item.actualPrice = 0;
         else item.actualPrice = req.body.actualPrice || item.actualPrice;
         item.discount = req.body.discount || item.discount;
+        if(item.status != 'sold_out' && req.body.status == 'sold_out'){
+            item.soldDate = Date.now;
+        }
 
-        item.soldDate = Date.now;
-
-        item.save(function(err){
-            if(err) return handleError(err, res);
-            res.json(item);
-        });
+        if(req.body.image){
+            var image = prepareImage(req.body.image);
+            item.attach('image', {path: image}, function(err){
+                if(err) return handleError(err, res);
+                item.save(function(err){
+                    if(err) return handleError(err, res);
+                    res.json(item);
+                });
+            });
+        }
+        else{
+            item.save(function(err){
+                if(err) return handleError(err, res);
+                res.json(item);
+            });
+        }
+    });
+})
+.delete('/item/:item_id', isItemOwner, function(req, res){
+    Item.findOneAndRemove({_id: req.params.item_id}, function(err){
+        if(err) return handleError(err, res);
+        res.json('deleted');
     });
 })
 .get('/get_my_info', function(req, res){

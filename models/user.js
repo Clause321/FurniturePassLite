@@ -11,7 +11,7 @@ var discount_t = 'n/a 0to15 15to30 30to50 50to70 70to100 100plus'.split(' ');
 
 var itemSchema = Schema({
     title: String,
-    status: String, // 'on_sale' or 'off_shelf'
+    status: String, // 'on_sale' or 'off_shelf' or 'sold_out'
     description: String,
     detail: String,
     date: {
@@ -45,12 +45,12 @@ itemSchema.plugin(crate, {
         image: {
             processor: new GraphMagic({
                 tmpDir: '/tmp',
-                formats: ['JPEG', 'GIF', 'PNG', 'SVG'],
+                formats: ['JPEG', 'GIF', 'PNG'],
                 transforms: {
                     small: {
                         resize: '160x160'
                     },
-                        large: {
+                    large: {
                         resize: '1000x1000'
                     }
                 }
